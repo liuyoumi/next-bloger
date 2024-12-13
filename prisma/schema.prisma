@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model article {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.VarChar(255)
+  tag_id    Int
+  content   String    @db.Text
+  summary   String    @db.VarChar(500)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(0)
+
+  tag Tag @relation(fields: [tag_id], references: [id])
+}
+
+model config {
+  id    Int    @id @default(autoincrement())
+  label String @db.VarChar(100)
+  value String @db.VarChar(255)
+}
+
+model Tag {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(50)
+  article article[]
+}
